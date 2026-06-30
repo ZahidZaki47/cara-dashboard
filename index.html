@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>CARA Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg: #0f172a; --card: #1e293b; --border: #334155;
+    --text: #f1f5f9; --muted: #94a3b8; --faint: #475569;
+    --green: #22c55e; --red: #ef4444; --blue: #60a5fa; --yellow: #fbbf24;
+    --green-bg: #14532d; --red-bg: #450a0a; --blue-bg: #1e3a5f;
+  }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+  .container { max-width: 480px; margin: 0 auto; padding: 16px; }
+
+  /* Header */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+  .header-title { font-size: 20px; font-weight: 700; }
+  .header-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .live-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); margin-right: 4px; animation: pulse 2s infinite; }
+  .last-update { font-size: 11px; color: var(--faint); text-align: right; }
+
+  /* Cards */
+  .card { background: var(--card); border-radius: 18px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); }
+  .card-sm { padding: 12px; border-radius: 14px; }
+
+  /* Price section */
+  .price-main { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; }
+  .price-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .price-value { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+  .change-value { font-size: 22px; font-weight: 700; text-align: right; }
+  .change-sub { font-size: 11px; color: var(--muted); text-align: right; margin-top: 2px; }
+  .price-meta { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .meta-item { text-align: center; }
+  .meta-label { font-size: 10px; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .meta-val { font-size: 14px; font-weight: 600; }
+
+  /* Badges */
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
+  .badge-bull { background: var(--green-bg); color: var(--green); }
+  .badge-bear { background: var(--red-bg); color: var(--red); }
+  .badge-side { background: var(--blue-bg); color: var(--blue); }
+  .badge-open { background: var(--green-bg); color: var(--green); }
+  .badge-none { background: #1e293b; color: var(--faint); border: 1px solid var(--border); }
+
+  /* Account card */
+  .acc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .acc-name { font-size: 14px; font-weight: 600; }
+  .acc-capital { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .acc-equity { text-align: right; }
+  .acc-eq-val { font-size: 20px; font-weight: 700; }
+  .acc-pnl { font-size: 13px; font-weight: 600; margin-top: 2px; }
+  .acc-stats { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .acc-stats span strong { color: var(--text); }
+
+  /* Position box */
+  .pos-box { background: #0f172a; border-radius: 12px; padding: 12px; border: 1px solid var(--border); }
+  .pos-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .pos-pnl { font-size: 16px; font-weight: 700; }
+  .pos-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .pos-item .pi-label { font-size: 10px; color: var(--muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .pos-item .pi-val { font-size: 13px; font-weight: 600; }
+  .stop-val { color: var(--red) !important; }
+  .no-pos { text-align: center; padding: 12px; color: var(--faint); font-size: 13px; border: 1px dashed var(--border); border-radius: 12px; }
+
+  /* Last trade bar */
+  .last-trade { display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); color: var(--muted); }
+
+  /* Strategy info */
+  .strat-card { padding: 12px 16px; }
+  .strat-title { font-size: 12px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .strat-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .strat-chip { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px; font-size: 11px; }
+  .strat-chip span { color: var(--blue); font-weight: 600; }
+
+  /* Spinner & animations */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  .spin { animation: spin 1s linear infinite; display: inline-block; }
+  .green { color: var(--green); } .red { color: var(--red); } .blue { color: var(--blue); }
+  .yellow { color: var(--yellow); }
+
+  /* Footer */
+  .footer { text-align: center; padding: 20px 0 8px; }
+  .footer p { font-size: 11px; color: var(--faint); margin-bottom: 4px; }
+
+  /* Error banner */
+  .error-banner { background: var(--red-bg); border: 1px solid var(--red); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; font-size: 13px; color: var(--red); display: none; }
+
+  /* Separator */
+  hr { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
+
+  /* Touch ripple for refresh button */
+  .refresh-btn { background: var(--card); border: 1px solid var(--border); color: var(--blue); border-radius: 12px; padding: 8px 16px; font-size: 13px; cursor: pointer; margin-top: 4px; transition: background 0.15s; }
+  .refresh-btn:active { background: var(--blue-bg); }
+
+  /* Progress bar for countdown */
+  .countdown-bar { height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 6px; }
+  .countdown-fill { height: 100%; background: var(--blue); transition: width 1s linear; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="header-title">CARA Dashboard</div>
+      <div class="header-sub">LTC/USDT · Paper Trading · Syariah</div>
+    </div>
+    <div>
+      <div class="last-update">
+        <span class="live-dot" id="dot"></span><span id="upd">Loading...</span>
+      </div>
+      <button class="refresh-btn" onclick="doRefresh()">↻ Refresh</button>
+    </div>
+  </div>
+
+  <!-- Error banner -->
+  <div class="error-banner" id="err-banner">⚠ Gagal sambung — data mungkin lapuk</div>
+
+  <!-- Price card -->
+  <div class="card" id="price-card">
+    <div class="price-main">
+      <div>
+        <div class="price-label">LTC/USDT Harga Semasa</div>
+        <div class="price-value" id="price">—</div>
+      </div>
+      <div>
+        <div class="change-value" id="change">—</div>
+        <div class="change-sub">24j %</div>
+      </div>
+    </div>
+    <div class="price-meta">
+      <div class="meta-item">
+        <div class="meta-label">24j Tinggi</div>
+        <div class="meta-val" id="high">—</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">24j Rendah</div>
+        <div class="meta-val" id="low">—</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Regime</div>
+        <div id="regime-badge">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Strategy row -->
+  <div class="card card-sm strat-card">
+    <div class="strat-title">Strategi Champion</div>
+    <div class="strat-row">
+      <div class="strat-chip">BB(20,1.5) 4h</div>
+      <div class="strat-chip">HMM 2-state</div>
+      <div class="strat-chip">ATR×5.0 stop</div>
+      <div class="strat-chip">WFA <span id="strat-wfa">9/10</span></div>
+      <div class="strat-chip">OOS Sharpe <span id="strat-oos">3.246</span></div>
+    </div>
+    <div style="margin-top:8px; font-size:11px; color:var(--faint)">
+      Bar 4h terkini: <span id="bar-time">—</span>
+    </div>
+  </div>
+
+  <!-- Accounts -->
+  <div id="accounts"></div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>Data dikemaskini setiap 4 jam via GitHub Actions</p>
+    <p>Harga live dari Binance API (30s auto-refresh)</p>
+    <div class="countdown-bar"><div class="countdown-fill" id="cbar" style="width:100%"></div></div>
+  </div>
+
+</div>
+
+<script>
+// ── Config ───────────────────────────────────────────────────────────────────
+// TUKAR ini kepada username/repo GitHub anda:
+const GITHUB_USER = "ZahidZaki47";
+const GITHUB_REPO = "cara-trading";
+const GITHUB_BRANCH = "main";
+
+const STATE_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/docs/signal_state.json`;
+const BINANCE_PRICE_URL = "https://api.binance.com/api/v3/ticker/24hr?symbol=LTCUSDT";
+const REFRESH_SEC = 30;
+
+let countdown = REFRESH_SEC;
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+const fmt  = (n, dp=2) => n != null && !isNaN(n) ? Number(n).toFixed(dp) : "—";
+const fmtU = n => n >= 0 ? "+$"+fmt(Math.abs(n)) : "-$"+fmt(Math.abs(n));
+const fmtP = n => n >= 0 ? "+"+fmt(n)+"%" : fmt(n)+"%";
+const el   = id => document.getElementById(id);
+const setCls = (el, cls) => { el.className = cls; };
+
+function regimeBadge(r) {
+  if (!r || r === "unknown") return '<span class="badge badge-side">— UNKNOWN</span>';
+  if (r === "bull")     return '<span class="badge badge-bull">▲ BULL</span>';
+  if (r === "bear")     return '<span class="badge badge-bear">▼ BEAR</span>';
+  return '<span class="badge badge-side">~ SIDEWAYS</span>';
+}
+
+function timeSince(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (isNaN(d)) return "—";
+  const diff = (Date.now() - d) / 1000;
+  if (diff < 60)   return Math.round(diff) + "s lalu";
+  if (diff < 3600) return Math.round(diff/60) + "min lalu";
+  const h = Math.round(diff/3600);
+  return h + " jam lalu";
+}
+
+function hoursOpen(iso) {
+  if (!iso) return 0;
+  const d = new Date(iso);
+  if (isNaN(d)) return 0;
+  return Math.floor((Date.now() - d) / 3600000);
+}
+
+// ── Fetch live price from Binance ────────────────────────────────────────────
+async function fetchPrice() {
+  try {
+    const r = await fetch(BINANCE_PRICE_URL, { cache: "no-store" });
+    const d = await r.json();
+    return {
+      price:     parseFloat(d.lastPrice),
+      change:    parseFloat(d.priceChangePercent),
+      high:      parseFloat(d.highPrice),
+      low:       parseFloat(d.lowPrice),
+    };
+  } catch {
+    return null;
+  }
+}
+
+// ── Fetch state from GitHub raw ───────────────────────────────────────────────
+async function fetchState() {
+  try {
+    const r = await fetch(STATE_URL + "?t=" + Date.now(), { cache: "no-store" });
+    return await r.json();
+  } catch {
+    return null;
+  }
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function renderPrice(ticker, state) {
+  if (ticker) {
+    el("price").textContent = "$" + fmt(ticker.price, 4);
+    el("change").textContent = fmtP(ticker.change);
+    el("change").className = "change-value " + (ticker.change >= 0 ? "green" : "red");
+    el("high").textContent  = "$" + fmt(ticker.high, 4);
+    el("low").textContent   = "$" + fmt(ticker.low, 4);
+  }
+  if (state) {
+    el("regime-badge").innerHTML = regimeBadge(state.regime);
+    el("bar-time").textContent   = state.bar_time || "—";
+    if (state.strategy) {
+      el("strat-wfa").textContent = state.strategy.wfa || "9/10";
+      el("strat-oos").textContent = state.strategy.oos || "3.246";
+    }
+  }
+}
+
+function renderAccounts(state, livePrice) {
+  if (!state || !state.accounts) { el("accounts").innerHTML = ""; return; }
+
+  el("accounts").innerHTML = state.accounts.map(acc => {
+    const pos = acc.position;
+    const capital = acc.capital;
+
+    // Kira equity: cash + nilai posisi (guna live price)
+    let equity = acc.cash || capital;
+    let posHtml = "";
+
+    if (pos && livePrice) {
+      const posVal  = pos.qty * livePrice;
+      equity        = (acc.cash || 0) + posVal;
+      const pnlUsd  = (livePrice - pos.entry_price) / pos.entry_price * pos.size_usd;
+      const pnlPct  = (livePrice - pos.entry_price) / pos.entry_price * 100;
+      const hrs     = hoursOpen(pos.entry_time);
+      const pClass  = pnlUsd >= 0 ? "green" : "red";
+
+      posHtml = `
+      <div class="pos-box">
+        <div class="pos-header">
+          <span class="badge badge-open">● POSISI TERBUKA</span>
+          <span class="pos-pnl ${pClass}">${fmtU(pnlUsd)} (${fmtP(pnlPct)})</span>
+        </div>
+        <div class="pos-grid">
+          <div class="pos-item">
+            <div class="pi-label">Entry</div>
+            <div class="pi-val">$${fmt(pos.entry_price, 4)}</div>
+          </div>
+          <div class="pos-item">
+            <div class="pi-label">Stop Loss</div>
+            <div class="pi-val stop-val">$${fmt(pos.stop_price, 4)}</div>
+          </div>
+          <div class="pos-item">
+            <div class="pi-label">Saiz / Masa</div>
+            <div class="pi-val">$${fmt(pos.size_usd, 0)} · ${hrs}j</div>
+          </div>
+        </div>
+      </div>`;
+    } else if (pos) {
+      posHtml = `
+      <div class="pos-box">
+        <div class="pos-header">
+          <span class="badge badge-open">● POSISI TERBUKA</span>
+          <span class="pos-pnl muted">Tunggu harga live...</span>
+        </div>
+        <div class="pos-grid">
+          <div class="pos-item">
+            <div class="pi-label">Entry</div>
+            <div class="pi-val">$${fmt(pos.entry_price, 4)}</div>
+          </div>
+          <div class="pos-item">
+            <div class="pi-label">Stop Loss</div>
+            <div class="pi-val stop-val">$${fmt(pos.stop_price, 4)}</div>
+          </div>
+          <div class="pos-item">
+            <div class="pi-label">Saiz</div>
+            <div class="pi-val">$${fmt(pos.size_usd, 0)}</div>
+          </div>
+        </div>
+      </div>`;
+    } else {
+      posHtml = `<div class="no-pos">Tiada posisi terbuka<br><span style="font-size:11px">Menunggu signal BUY dari BB band bawah</span></div>`;
+    }
+
+    const pnl    = equity - capital;
+    const pnlPct = pnl / capital * 100;
+    const pClass = pnl >= 0 ? "green" : "red";
+    const wr     = acc.trades > 0 ? fmt(acc.wins / acc.trades * 100, 0) + "%" : "—";
+
+    const lastHtml = acc.last_trade ? `
+    <div class="last-trade">
+      <span>Trade terakhir</span>
+      <span class="${acc.last_trade.pnl >= 0 ? 'green' : 'red'}" style="font-weight:600">
+        ${fmtU(acc.last_trade.pnl)} · ${acc.last_trade.reason || ""}
+      </span>
+    </div>` : "";
+
+    return `
+    <div class="card">
+      <div class="acc-header">
+        <div>
+          <div class="acc-name">${acc.label}</div>
+          <div class="acc-capital">Modal: $${acc.capital.toLocaleString()}</div>
+        </div>
+        <div class="acc-equity">
+          <div class="acc-eq-val">$${fmt(equity, 2)}</div>
+          <div class="acc-pnl ${pClass}">${fmtU(pnl)} (${fmtP(pnlPct)})</div>
+        </div>
+      </div>
+      <div class="acc-stats">
+        <span>Trades: <strong>${acc.trades}</strong></span>
+        <span>Menang: <strong>${acc.wins}</strong></span>
+        <span>Win Rate: <strong>${wr}</strong></span>
+      </div>
+      ${posHtml}
+      ${lastHtml}
+    </div>`;
+  }).join("");
+}
+
+// ── Main refresh ─────────────────────────────────────────────────────────────
+let lastState = null;
+let lastTicker = null;
+
+async function doRefresh() {
+  el("dot").style.background = "var(--yellow)";
+  el("upd").textContent = "Loading...";
+
+  const [ticker, state] = await Promise.all([fetchPrice(), fetchState()]);
+
+  if (!ticker && !state) {
+    el("err-banner").style.display = "block";
+    el("dot").style.background = "var(--red)";
+  } else {
+    el("err-banner").style.display = "none";
+    el("dot").style.background = "var(--green)";
+  }
+
+  if (ticker) lastTicker = ticker;
+  if (state)  lastState  = state;
+
+  renderPrice(lastTicker, lastState);
+  renderAccounts(lastState, lastTicker ? lastTicker.price : null);
+
+  const now = new Date();
+  el("upd").textContent = now.toLocaleTimeString("ms-MY");
+
+  // Reset countdown
+  countdown = REFRESH_SEC;
+  el("cbar").style.width = "100%";
+}
+
+// ── Countdown bar ─────────────────────────────────────────────────────────────
+setInterval(() => {
+  countdown = Math.max(0, countdown - 1);
+  el("cbar").style.width = (countdown / REFRESH_SEC * 100) + "%";
+  if (countdown === 0) doRefresh();
+}, 1000);
+
+// ── Auto re-render positions with live price while page is open ───────────────
+setInterval(() => {
+  if (lastState && lastTicker) {
+    renderAccounts(lastState, lastTicker.price);
+  }
+}, 5000);
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+doRefresh();
+</script>
+</body>
+</html>

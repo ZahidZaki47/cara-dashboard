@@ -1,0 +1,51 @@
+{
+  "updated_at": "2026-06-30T14:36:36.264266+00:00",
+  "symbol": "LTCUSDT",
+  "regime": "unknown",
+  "signal": 0,
+  "bar_time": "2026-06-30 13:05 UTC",
+  "pct_b": null,
+  "bb_lower": null,
+  "bb_upper": null,
+  "accounts": [
+    {
+      "id": "A",
+      "label": "Akaun A \u2014 Konservatif",
+      "capital": 2000.0,
+      "cash": 1200.0,
+      "trades": 0,
+      "wins": 0,
+      "position": {
+        "entry_price": 41.97,
+        "stop_price": 37.772999999999996,
+        "size_usd": 800.0,
+        "entry_time": "2026-06-30T13:05:05.723246+00:00",
+        "qty": 19.061234214915416
+      },
+      "last_trade": null
+    },
+    {
+      "id": "B",
+      "label": "Akaun B \u2014 Maksimum",
+      "capital": 3000.0,
+      "cash": 1800.0,
+      "trades": 0,
+      "wins": 0,
+      "position": {
+        "entry_price": 41.97,
+        "stop_price": 37.772999999999996,
+        "size_usd": 1200.0,
+        "entry_time": "2026-06-30T13:05:05.723246+00:00",
+        "qty": 28.591851322373124
+      },
+      "last_trade": null
+    }
+  ],
+  "strategy": {
+    "name": "LTC BB(20,1.5) + HMM 2-state + ATR\u00d75.0 stop",
+    "wfa": "9/10",
+    "oos": 3.246,
+    "is_sh": 3.119,
+    "income": 23.64
+  }
+}
