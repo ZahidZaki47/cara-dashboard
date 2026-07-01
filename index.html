@@ -413,15 +413,17 @@ function renderAccounts(state, price) {
 }
 
 // ── Binance WebSocket (real-time ~1s) ─────────────────────────────────────
+// NOTA: /ws/<stream> ialah stream satu-hala — JANGAN hantar sebarang mesej.
+// Browser handle binary ping/pong secara automatik. Hantar JSON = server tutup.
 let ws = null;
 let wsReconnectTimer = null;
-let wsPingTimer = null;
-let wsAlive = false;
+let wsStaleTimer = null;
+let wsLastMsg = 0;
 
 function connectWS() {
   if (ws) { try { ws.close(); } catch(e) {} }
   clearTimeout(wsReconnectTimer);
-  clearInterval(wsPingTimer);
+  clearInterval(wsStaleTimer);
 
   el("ws-label").textContent = "WebSocket: Sambung...";
   el("wsdot").className = "ws-dot warn";
@@ -429,20 +431,29 @@ function connectWS() {
   ws = new WebSocket(WS_URL);
 
   ws.onopen = () => {
-    wsAlive = true;
+    wsLastMsg = Date.now();
     el("ws-label").textContent = "WebSocket: Live ●";
     el("wsdot").className = "ws-dot live";
+
+    // Semak staleness setiap 8s — jika >12s tiada data, reconnect
+    wsStaleTimer = setInterval(() => {
+      if (Date.now() - wsLastMsg > 12000) {
+        clearInterval(wsStaleTimer);
+        try { ws.close(); } catch(e) {}
+        connectWS();
+      }
+    }, 8000);
   };
 
   ws.onmessage = (evt) => {
     try {
+      wsLastMsg = Date.now();
       const d = JSON.parse(evt.data);
       livePrice = parseFloat(d.c);
       const change = parseFloat(d.P);
       const high   = parseFloat(d.h);
       const low    = parseFloat(d.l);
 
-      // Kemaskini UI harga
       el("price").textContent = "$" + livePrice.toFixed(4);
       const chEl = el("change");
       chEl.textContent = fmtP(change);
@@ -451,7 +462,6 @@ function connectWS() {
       el("low").textContent  = "$" + fmt(low, 4);
       el("upd").textContent  = new Date().toLocaleTimeString("ms-MY");
 
-      // Kemaskini PnL posisi secara real-time
       if (appState) renderAccounts(appState, livePrice);
     } catch(e) {}
   };
@@ -462,18 +472,11 @@ function connectWS() {
   };
 
   ws.onclose = () => {
-    wsAlive = false;
+    clearInterval(wsStaleTimer);
     el("ws-label").textContent = "WebSocket: Terputus — sambung semula...";
     el("wsdot").className = "ws-dot";
-    wsReconnectTimer = setTimeout(connectWS, 4000);
+    wsReconnectTimer = setTimeout(connectWS, 3000);
   };
-
-  // Ping setiap 30s supaya sambungan kekal
-  wsPingTimer = setInterval(() => {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ method: "ping" }));
-    }
-  }, 30000);
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────
