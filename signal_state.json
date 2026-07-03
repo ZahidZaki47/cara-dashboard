@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-02T22:15:48.442103+00:00",
+  "updated_at": "2026-07-03T04:52:06.317574+00:00",
   "symbol": "LTCUSDT",
   "regime": "bull",
   "signal": 0,
@@ -15,33 +15,31 @@
       "id": "A",
       "label": "Akaun A \u2014 Konservatif",
       "capital": 2000.0,
-      "cash": 1200.0,
-      "trades": 0,
-      "wins": 0,
-      "position": {
-        "entry_price": 41.97,
-        "stop_price": 37.772999999999996,
-        "size_usd": 800.0,
-        "entry_time": "2026-06-30T13:05:05.723246+00:00",
-        "qty": 19.061234214915416
-      },
-      "last_trade": null
+      "cash": 2012.96,
+      "trades": 1,
+      "wins": 1,
+      "position": null,
+      "last_trade": {
+        "entry": 41.97,
+        "exit": 42.65,
+        "pnl": 12.961639266142555,
+        "reason": "signal_exit"
+      }
     },
     {
       "id": "B",
       "label": "Akaun B \u2014 Maksimum",
       "capital": 3000.0,
-      "cash": 1800.0,
-      "trades": 0,
-      "wins": 0,
-      "position": {
-        "entry_price": 41.97,
-        "stop_price": 37.772999999999996,
-        "size_usd": 1200.0,
-        "entry_time": "2026-06-30T13:05:05.723246+00:00",
-        "qty": 28.591851322373124
-      },
-      "last_trade": null
+      "cash": 3019.44,
+      "trades": 1,
+      "wins": 1,
+      "position": null,
+      "last_trade": {
+        "entry": 41.97,
+        "exit": 42.65,
+        "pnl": 19.442458899213833,
+        "reason": "signal_exit"
+      }
     }
   ],
   "strategy": {
