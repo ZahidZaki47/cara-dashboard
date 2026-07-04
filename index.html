@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CARA Dashboard</title>
+<title>C A R A Dashboard</title>
 <style>
   :root{--bg:#0b0e14;--card:#131826;--card2:#1a2132;--line:#232b3e;--fg:#e8edf6;
         --dim:#7d8aa5;--green:#2ecc71;--red:#ff5c5c;--gold:#e8b33d;--blue:#4f8ef7;
@@ -11,73 +11,90 @@
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:var(--bg);color:var(--fg);
        font-family:-apple-system,"Segoe UI",Roboto,sans-serif;
-       display:flex;justify-content:center;padding:14px;min-height:100vh}
-  .wrap{width:100%;max-width:440px}
-  .top{display:flex;justify-content:space-between;align-items:flex-start;margin:4px 2px 14px}
-  h1{font-size:20px;letter-spacing:1px}
-  .sub{color:var(--dim);font-size:12px;margin-top:2px}
-  .ws{font-size:11px;color:var(--dim);text-align:right}
-  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--dim);
-       margin-right:4px}
+       display:flex;justify-content:center;padding:0 12px 24px;min-height:100vh}
+  .wrap{width:100%;max-width:430px}
+  .top{display:flex;justify-content:space-between;align-items:center;
+       padding:14px 2px 10px}
+  h1{font-size:19px;letter-spacing:3px}
+  .sub{color:var(--dim);font-size:11px;margin-top:2px}
+  .ws{font-size:10.5px;color:var(--dim);text-align:right;line-height:1.5}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--dim);margin-right:4px}
   .dot.on{background:var(--green)}
+  .tabs{position:sticky;top:0;z-index:10;display:flex;gap:6px;background:var(--bg);
+        padding:8px 0 10px}
+  .tab{flex:1;text-align:center;padding:10px 0;border-radius:10px;font-size:13px;
+       font-weight:600;color:var(--dim);background:var(--card);border:1px solid var(--line);
+       cursor:pointer;user-select:none}
+  .tab.on{color:#fff;background:var(--badge);border-color:var(--blue)}
+  .pane{display:none}.pane.on{display:block}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
-        padding:16px;margin-bottom:12px}
-  .label{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;
-         margin-bottom:10px}
-  .big{font-size:34px;font-weight:700}
+        padding:15px;margin-bottom:11px}
+  .label{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:9px}
+  .big{font-size:33px;font-weight:700}
   .pnl{font-size:15px;margin-top:2px}
-  .pos{color:var(--green)} .neg{color:var(--red)} .dim{color:var(--dim)}
-  .grid5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:6px;margin-top:12px}
-  .mini{background:var(--card2);border-radius:10px;padding:8px 4px;text-align:center;
-        border:1px solid transparent}
+  .pos{color:var(--green)}.neg{color:var(--red)}.dim{color:var(--dim)}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:4px}
+  .mini{background:var(--card2);border-radius:9px;padding:8px 4px;text-align:center;border:1px solid transparent}
   .mini.on{border-color:var(--green)}
-  .mini .nm{font-size:10px;color:var(--dim);margin-bottom:3px}
-  .mini .pr{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
-  .mini .ch{font-size:9.5px;margin-top:2px}
-  .mini .held{font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--green);margin-top:3px}
-  .uninote{color:var(--dim);font-size:11.5px;line-height:1.55;margin-top:10px;
-           background:var(--card2);border-radius:8px;padding:10px}
+  .mini .nm{font-size:10px;color:var(--dim)}
+  .mini .pr{font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:2px}
+  .mini .ch{font-size:9.5px;margin-top:1px}
+  .mini .held{font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--green);margin-top:2px;min-height:10px}
   .badge{display:inline-block;background:var(--badge);border:1px solid var(--line);
-         color:var(--blue);font-size:11px;font-weight:600;border-radius:20px;
-         padding:4px 12px;margin:2px 3px 2px 0}
-  .badge.green{color:var(--green)} .badge.gold{color:var(--gold)}
+         color:var(--blue);font-size:11px;font-weight:600;border-radius:20px;padding:4px 11px;margin:2px 3px 2px 0}
+  .badge.green{color:var(--green)}.badge.gold{color:var(--gold)}
   .bar-row{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:13px}
-  .bar-name{width:50px;color:var(--dim)}
-  .bar-track{flex:1;height:16px;background:var(--bg);border-radius:5px;overflow:hidden}
+  .bar-name{width:48px;color:var(--dim)}
+  .bar-track{flex:1;height:15px;background:var(--bg);border-radius:5px;overflow:hidden}
   .bar-fill{height:100%;border-radius:5px;transition:width .6s}
-  .bar-pct{width:52px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px}
-  .row{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;
-       border-bottom:1px solid var(--line)}
+  .bar-pct{width:50px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px}
+  .row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--line)}
   .row:last-child{border-bottom:none}
   .row .k{color:var(--dim)}
-  canvas{width:100%;height:90px}
-  .meta{display:flex;justify-content:space-between;color:var(--dim);font-size:10.5px;
-        margin-top:8px}
-  .foot{color:var(--dim);font-size:10.5px;text-align:center;margin:14px 0 6px;line-height:1.6}
-  .status{background:var(--card2);border-radius:10px;padding:12px;text-align:center;
-          font-size:13px;margin-top:12px}
+  .poscard{background:var(--card2);border-radius:11px;padding:12px;margin-bottom:9px;border-left:3px solid var(--blue)}
+  .poshead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .possym{font-size:15px;font-weight:700}
+  .pnlbig{font-size:15px;font-weight:700}
+  canvas{width:100%;height:88px}
+  .meta{display:flex;justify-content:space-between;color:var(--dim);font-size:10.5px;margin-top:7px}
+  .status{background:var(--card2);border-radius:10px;padding:11px;text-align:center;font-size:12.5px;margin-top:10px}
+  .faq h3{font-size:13.5px;margin-bottom:5px;color:var(--blue)}
+  .faq p{font-size:12.5px;line-height:1.6;color:var(--fg)}
+  .note{color:var(--dim);font-size:11px;text-align:center;margin-top:6px}
+  .foot{color:var(--dim);font-size:10.5px;text-align:center;margin-top:12px;line-height:1.6}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
-    <div>
-      <h1>C A R A</h1>
-      <div class="sub">Multi-Aset &middot; Paper Trading &middot; Syariah</div>
-    </div>
+    <div><h1>C A R A</h1><div class="sub">Multi-Aset · Paper Trading · Syariah</div></div>
     <div class="ws"><span class="dot" id="wsdot"></span><span id="clock">—</span><br>
-      <span id="wslabel">WebSocket: sambung…</span></div>
+      <span id="wslabel">sambung…</span></div>
   </div>
 
-  <div class="card">
-    <div class="label">Portfolio Equity <span style="float:right" id="mode"></span></div>
-    <div class="big" id="equity">—</div>
-    <div class="pnl dim" id="pnl">memuatkan…</div>
+  <div class="tabs">
+    <div class="tab on" data-t="ringkasan">Ringkasan</div>
+    <div class="tab" data-t="posisi">Posisi</div>
+    <div class="tab" data-t="panduan">Panduan</div>
   </div>
 
-  <div class="card">
-    <div class="label">Universe — 12 Aset Patuh Syariah</div>
-    <div class="grid5" id="tickers">
+  <!-- ═══ TAB RINGKASAN ═══ -->
+  <div class="pane on" id="pane-ringkasan">
+    <div class="card">
+      <div class="label">Portfolio Equity <span style="float:right" id="mode"></span></div>
+      <div class="big" id="equity">—</div>
+      <div class="pnl dim" id="pnl">memuatkan…</div>
+      <div class="status" id="status">—</div>
+    </div>
+    <div class="card">
+      <div class="label">Alokasi Semasa</div>
+      <div id="alloc"></div>
+      <div class="note">Baki yang tidak dilabur kekal sebagai USDT (tunai). Saiz posisi
+        dilaras automatik setiap hari mengikut keadaan pasaran.</div>
+    </div>
+    <div class="card">
+      <div class="label">Universe — Aset Dipantau</div>
+      <div class="grid" id="tickers">
       <div class="mini" id="m-BTC"><div class="nm">BTC</div><div class="pr" id="p-BTC">—</div><div class="ch" id="c-BTC"></div><div class="held" id="h-BTC"></div></div>
       <div class="mini" id="m-ETH"><div class="nm">ETH</div><div class="pr" id="p-ETH">—</div><div class="ch" id="c-ETH"></div><div class="held" id="h-ETH"></div></div>
       <div class="mini" id="m-ADA"><div class="nm">ADA</div><div class="pr" id="p-ADA">—</div><div class="ch" id="c-ADA"></div><div class="held" id="h-ADA"></div></div>
@@ -91,55 +108,91 @@
       <div class="mini" id="m-UNI"><div class="nm">UNI</div><div class="pr" id="p-UNI">—</div><div class="ch" id="c-UNI"></div><div class="held" id="h-UNI"></div></div>
       <div class="mini" id="m-PAXG"><div class="nm">PAXG</div><div class="pr" id="p-PAXG">—</div><div class="ch" id="c-PAXG"></div><div class="held" id="h-PAXG"></div></div>
     </div>
-    <div class="uninote">12 aset patuh Syariah (saringan SAC SC Malaysia / AAOIFI). Sistem memilih beberapa aset untuk dipegang atau berlindung dalam <b>USDT</b> apabila tiada yang layak. PAXG = emas fizikal tertokenkan.</div>
+      <div class="note">Sistem memilih sehingga <b>TIGA</b> aset untuk dipegang serentak daripada 12 aset patuh Syariah (saringan SAC / AAOIFI).</div>
+    </div>
+    <div class="card">
+      <div class="label">Equity — Rekod Prestasi</div>
+      <canvas id="spark" width="800" height="176"></canvas>
+      <div class="note" id="sparknote"></div>
+      <div class="meta"><span id="bar-date"></span><span id="updated"></span></div>
+    </div>
   </div>
 
-  <div class="card">
-    <div class="label">Alokasi Semasa</div>
-    <div id="alloc"></div>
-    <div class="status" id="status">—</div>
+  <!-- ═══ TAB POSISI ═══ -->
+  <div class="pane" id="pane-posisi">
+    <div id="poslist"></div>
+    <div class="card">
+      <div class="label">Bila Posisi Ditutup?</div>
+      <div class="faq"><p>Tiada stop-loss/take-profit tetap. Tiga mekanisme automatik:
+        <b>1)</b> Rotasi awal bulan — aset yang tidak lagi layak DIJUAL dan diganti;
+        <b>2)</b> Dail risiko harian — saiz posisi dikecilkan automatik bila pasaran
+        bergolak (pengganti stop loss);
+        <b>3)</b> Mod pertahanan — 100% USDT bila tiada aset layak.</p></div>
+    </div>
+    <div class="card">
+      <div class="label">Rekod Trade</div>
+      <div id="tradeinfo"></div>
+    </div>
   </div>
 
-  <div class="card">
-    <div class="label">Posisi &amp; Trade</div>
-    <div id="posinfo"></div>
+  <!-- ═══ TAB PANDUAN ═══ -->
+  <div class="pane" id="pane-panduan">
+    <div class="card faq">
+      <h3>Apa maksud "Alokasi 11%"?</h3>
+      <p>11% daripada nilai portfolio berada dalam aset itu; selebihnya kekal USDT.
+      Anda topup akaun dengan USDT → sistem guna USDT untuk beli aset → bila jual,
+      ia kembali menjadi USDT (berserta untung/rugi).</p>
+    </div>
+    <div class="card faq">
+      <h3>Kenapa alokasi kecil sekarang?</h3>
+      <p>Dail risiko: bila pasaran bergolak, sistem sengaja pegang kecil. Bila pasaran
+      tenang, alokasi membesar sendiri (maksimum ~33% seaset untuk sistem 3-aset,
+      100% untuk sistem 1-aset).</p>
+    </div>
+    <div class="card faq">
+      <h3>Carta equity nampak rata?</h3>
+      <p>Paper trading baru bermula (Julai 2026). Carta diisi satu titik sehari —
+      dalam beberapa bulan ia menjadi rekod prestasi penuh untuk memilih sistem terbaik.</p>
+    </div>
+    <div class="card faq">
+      <h3>Platform apa? MT4/MT5?</h3>
+      <p>Bukan. Sistem berjalan di awan (GitHub) dan — jika go-live nanti — akan beli/jual
+      terus di <b>Binance Spot</b> (aset kripto sebenar, patuh Syariah: tiada leverage,
+      tiada short, tiada faedah). MT4/MT5 ialah platform forex/CFD dan tidak digunakan.</p>
+    </div>
+    <div class="card faq">
+      <h3>Paper trading?</h3>
+      <p>Semua benar (harga sebenar, keputusan sebenar, fees dikira) KECUALI wangnya —
+      simulasi $3,000 untuk membuktikan sistem sebelum modal sebenar digunakan.</p>
+    </div>
+    <div class="foot">Panduan penuh &amp; glosari: fail <b>PANDUAN_STRATEGI.md</b> dalam
+      repo private<br>Logik &amp; parameter strategi tidak didedahkan di sini</div>
   </div>
-
-  <div class="card">
-    <div class="label">Equity (1 Tahun)</div>
-    <canvas id="spark" width="800" height="180"></canvas>
-    <div class="meta"><span id="bar-date"></span><span id="updated"></span></div>
-  </div>
-
-  <div class="card" style="padding:12px 16px">
-    <span class="badge">Rotasi Bulanan</span><span class="badge gold">Kawalan Volatiliti</span>
-    <span class="badge green">Spot Sahaja</span><span class="badge">Tiada Leverage</span>
-    <span class="badge">Semakan Harian 00:20 UTC</span>
-  </div>
-
-  <div class="foot">Harga: Binance WebSocket (real-time) &middot; State: GitHub Actions (harian)<br>
-    Keputusan dibuat pada bar harian lengkap &middot; Logik strategi tidak didedahkan</div>
 </div>
 
 <script>
-const COLORS = {BTC:"#f7931a", ETH:"#627eea", ADA:"#0033ad", XRP:"#00aae4",
-                SOL:"#14f195", AVAX:"#e84142", LINK:"#2a5ada", LTC:"#345d9d",
-                XLM:"#54c4f2", ATOM:"#6f7390", UNI:"#ff007a", PAXG:"#e8b33d",
-                USDT:"#2ecc71"};
-const SYMS = ["BTCUSDT","ETHUSDT","ADAUSDT","XRPUSDT","SOLUSDT","AVAXUSDT",
-              "LINKUSDT","LTCUSDT","XLMUSDT","ATOMUSDT","UNIUSDT","PAXGUSDT"];
-let state = null;
-let live = {};   // sym -> {price, chg}
+const COLORS = {BTC:"#f7931a", ETH:"#627eea", BNB:"#f3ba2f", SOL:"#14f195", ADA:"#0033ad", LTC:"#345d9d", DOT:"#e6007a", LINK:"#2a5ada", AVAX:"#e84142", PAXG:"#e8b33d", XRP:"#00aae4", XLM:"#54c4f2", ATOM:"#6f7390", UNI:"#ff007a", USDT:"#2ecc71"};
+const SYMS = ["BTCUSDT", "ETHUSDT", "ADAUSDT", "XRPUSDT", "SOLUSDT", "AVAXUSDT", "LINKUSDT", "LTCUSDT", "XLMUSDT", "ATOMUSDT", "UNIUSDT", "PAXGUSDT"];
+let state = null, live = {};
+
+// ── tabs ──
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.remove("on"));
+  document.querySelectorAll(".pane").forEach(x => x.classList.remove("on"));
+  t.classList.add("on");
+  document.getElementById("pane-" + t.dataset.t).classList.add("on");
+});
 
 function fmt(n, d=2){ return n.toLocaleString("en-US",{minimumFractionDigits:d, maximumFractionDigits:d}); }
+function px_fmt(p){ return "$" + fmt(p, p >= 1000 ? 0 : (p >= 1 ? 2 : 4)); }
 
 function liveEquity(){
   if (!state) return null;
   let eq = state.cash_usd;
   for (const [sym, qty] of Object.entries(state.holdings || {})){
-    const px = live[sym] ? live[sym].price : null;
-    if (px === null) return state.equity;   // fallback nilai bar terakhir
-    eq += qty * px;
+    const lp = live[sym] ? live[sym].price : null;
+    if (lp === null) return state.equity;
+    eq += qty * lp;
   }
   return eq;
 }
@@ -154,53 +207,74 @@ function render(){
                    ((eq/state.initial-1)*100).toFixed(2) + "%)";
   el.className = "pnl " + (up?"pos":"neg");
 
-  const mode = document.getElementById("mode");
-  const heldList = state.held_assets || [];
-  if (state.mode === "AKTIF" && heldList.length){
-    mode.innerHTML = '<span class="badge green">AKTIF — ' + heldList.join("/") + '</span>';
-  } else {
-    mode.innerHTML = '<span class="badge gold">PERTAHANAN — TUNAI</span>';
-  }
+  const held = Object.keys(state.positions || {});
+  document.getElementById("mode").innerHTML = held.length
+    ? '<span class="badge green">AKTIF — ' + held.join("/") + '</span>'
+    : '<span class="badge gold">PERTAHANAN — TUNAI</span>';
+  document.getElementById("status").innerHTML = held.length
+    ? "Memegang <b>" + held.join(", ") + "</b> — dail risiko harian; rotasi awal bulan"
+    : "&#9203; Mod pertahanan — tiada aset layak buat masa ini. Kekal tunai sehingga rotasi awal bulan berikutnya.";
 
-  // Tanda aset yang sedang dipegang pada kad ticker
-  for (const nm of ["BTC","ETH","ADA","XRP","SOL","AVAX","LINK","LTC","XLM","ATOM","UNI","PAXG"]){
-    const card = document.getElementById("m-"+nm), tag = document.getElementById("h-"+nm);
-    const held = heldList.includes(nm);
-    if (card) card.className = "mini" + (held ? " on" : "");
-    if (tag) tag.textContent = held ? "DIPEGANG" : "";
-  }
-
+  // alokasi
   const alloc = document.getElementById("alloc");
   alloc.innerHTML = "";
-  for (const [name, pct] of Object.entries(state.allocation_pct)){
+  for (const [name, pct] of Object.entries(state.allocation_pct || {})){
     if (pct < 0.5) continue;
     const row = document.createElement("div");
     row.className = "bar-row";
     row.innerHTML = `<span class="bar-name">${name}</span>
-      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;
-        background:${COLORS[name]||"#7d8aa5"}"></div></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${COLORS[name]||"#7d8aa5"}"></div></div>
       <span class="bar-pct">${pct.toFixed(1)}%</span>`;
     alloc.appendChild(row);
   }
 
-  document.getElementById("status").innerHTML = (state.mode === "AKTIF" && heldList.length)
-    ? `Memegang <b>${heldList.join(", ")}</b> — laras risiko harian; rotasi awal bulan`
-    : `&#9203; Mod pertahanan — tiada aset layak buat masa ini.<br>
-       <span class="dim">Kekal tunai sehingga rotasi awal bulan berikutnya.</span>`;
+  // universe grid: penanda dipegang
+  for (const sym of SYMS){
+    const nm = sym.replace("USDT","");
+    const card = document.getElementById("m-"+nm), tag = document.getElementById("h-"+nm);
+    const isHeld = held.includes(nm);
+    if (card) card.className = "mini" + (isHeld ? " on" : "");
+    if (tag) tag.textContent = isHeld ? "DIPEGANG" : "";
+  }
 
-  let pos = "";
-  pos += `<div class="row"><span class="k">Pegangan aktif</span>
-          <span>${heldList.length ? heldList.join(", ") : "TIADA — 100% USDT"}</span></div>`;
-  pos += `<div class="row"><span class="k">Jumlah trade</span><span>${state.n_trades}</span></div>`;
+  // ── tab posisi: kad setiap aset ──
+  const pl = document.getElementById("poslist");
+  pl.innerHTML = "";
+  if (!held.length){
+    pl.innerHTML = `<div class="card"><div class="label">Posisi Terbuka</div>
+      <div class="status">Tiada posisi — 100% USDT (mod pertahanan).<br>
+      <span class="dim">Sistem menilai semula pada awal bulan berikutnya.</span></div></div>`;
+  } else {
+    for (const [nm, p] of Object.entries(state.positions)){
+      const lp = live[nm+"USDT"] ? live[nm+"USDT"].price : null;
+      const upnl = (lp && p.avg_cost) ? (lp/p.avg_cost - 1) * 100 : null;
+      const val = lp ? p.qty * lp : null;
+      const cls = upnl === null ? "dim" : (upnl >= 0 ? "pos" : "neg");
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `<div class="poscard" style="border-left-color:${COLORS[nm]||"#4f8ef7"}">
+        <div class="poshead"><span class="possym">${nm}</span>
+          <span class="pnlbig ${cls}">${upnl===null?"—":(upnl>=0?"+":"")+upnl.toFixed(2)+"%"}</span></div>
+        <div class="row"><span class="k">Masuk purata</span><span>${p.avg_cost?px_fmt(p.avg_cost):"—"}</span></div>
+        <div class="row"><span class="k">Harga kini</span><span>${lp?px_fmt(lp):"menunggu…"}</span></div>
+        <div class="row"><span class="k">Nilai posisi</span><span>${val?"$"+fmt(val):"—"}</span></div>
+        <div class="row"><span class="k">Sejak</span><span>${p.since?p.since.slice(0,10):"—"}</span></div>
+        <div class="row"><span class="k">Keluar melalui</span><span class="dim">rotasi bulanan / dail risiko</span></div>
+      </div>`;
+      pl.appendChild(card);
+    }
+  }
+
+  // rekod trade
+  let ti = `<div class="row"><span class="k">Jumlah trade</span><span>${state.n_trades}</span></div>`;
   if (state.last_trade){
     const lt = state.last_trade;
-    pos += `<div class="row"><span class="k">Trade terakhir</span>
-            <span>${lt.side} ${lt.symbol} $${fmt(lt.notional,0)} @ $${fmt(lt.price)}</span></div>`;
-  } else {
-    pos += `<div class="row"><span class="k">Trade terakhir</span><span class="dim">Belum ada</span></div>`;
+    ti += `<div class="row"><span class="k">Terakhir</span>
+           <span>${lt.side} ${lt.symbol} $${fmt(lt.notional,0)} @ ${px_fmt(lt.price)}</span></div>`;
   }
-  document.getElementById("posinfo").innerHTML = pos;
+  document.getElementById("tradeinfo").innerHTML = ti;
 
+  // spark
   const hist = state.history || [];
   const cv = document.getElementById("spark"), ctx = cv.getContext("2d");
   ctx.clearRect(0,0,cv.width,cv.height);
@@ -217,16 +291,16 @@ function render(){
     ctx.strokeStyle = vals[vals.length-1] >= vals[0] ? "#2ecc71" : "#ff5c5c";
     ctx.lineWidth = 2.5; ctx.stroke();
   }
-
+  document.getElementById("sparknote").textContent = hist.length < 15
+    ? "Baru bermula — carta ini diisi satu titik setiap hari dan menjadi rekod prestasi penuh dari masa ke masa."
+    : "";
   document.getElementById("bar-date").textContent = "Data bar: " + state.bar_date;
   document.getElementById("updated").textContent =
-    "Kemaskini state: " + new Date(state.updated_at).toLocaleString("ms-MY",
+    "Kemaskini: " + new Date(state.updated_at).toLocaleString("ms-MY",
       {timeZone:"Asia/Kuala_Lumpur", day:"numeric", month:"numeric", hour:"2-digit", minute:"2-digit"});
 }
 
 async function loadState(){
-  // raw.githubusercontent = data terkini serta-merta selepas commit,
-  // tidak bergantung pada Pages build; fallback ke fail Pages tempatan.
   const sources = [
     "https://raw.githubusercontent.com/ZahidZaki47/cara-dashboard/main/cara_state.json",
     "./cara_state.json",
@@ -238,25 +312,24 @@ async function loadState(){
       state = await r.json();
       render();
       return;
-    }catch(e){ /* cuba sumber seterusnya */ }
+    }catch(e){}
   }
   document.getElementById("pnl").textContent = "Gagal memuatkan state";
 }
 
-// ── Binance WebSocket: harga real-time ──
 function connectWS(){
   const streams = SYMS.map(s=>s.toLowerCase()+"@miniTicker").join("/");
   const ws = new WebSocket("wss://stream.binance.com:9443/stream?streams=" + streams);
   ws.onopen = ()=>{ document.getElementById("wsdot").className="dot on";
-                    document.getElementById("wslabel").textContent="WebSocket: Live"; };
+                    document.getElementById("wslabel").textContent="Live"; };
   ws.onmessage = (ev)=>{
     const d = JSON.parse(ev.data).data;
     const sym = d.s, price = parseFloat(d.c), open = parseFloat(d.o);
     live[sym] = {price, chg:(price/open-1)*100};
-    const name = sym.replace("USDT","");
-    const pEl = document.getElementById("p-"+name), cEl = document.getElementById("c-"+name);
+    const nm = sym.replace("USDT","");
+    const pEl = document.getElementById("p-"+nm), cEl = document.getElementById("c-"+nm);
     if (pEl){
-      pEl.textContent = "$" + fmt(price, price>1000?0:2);
+      pEl.textContent = px_fmt(price);
       const ch = live[sym].chg;
       cEl.textContent = (ch>=0?"+":"") + ch.toFixed(1) + "%";
       cEl.className = "ch " + (ch>=0?"pos":"neg");
@@ -264,16 +337,13 @@ function connectWS(){
     render();
   };
   ws.onclose = ()=>{ document.getElementById("wsdot").className="dot";
-                     document.getElementById("wslabel").textContent="WebSocket: sambung semula…";
+                     document.getElementById("wslabel").textContent="sambung semula…";
                      setTimeout(connectWS, 3000); };
   ws.onerror = ()=>ws.close();
 }
 
-function tick(){
-  document.getElementById("clock").textContent =
-    new Date().toLocaleTimeString("ms-MY",{timeZone:"Asia/Kuala_Lumpur"});
-}
-setInterval(tick, 1000); tick();
+setInterval(()=>{ document.getElementById("clock").textContent =
+  new Date().toLocaleTimeString("ms-MY",{timeZone:"Asia/Kuala_Lumpur"}); }, 1000);
 loadState();
 setInterval(loadState, 120000);
 connectWS();
