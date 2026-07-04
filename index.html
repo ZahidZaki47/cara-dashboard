@@ -2,555 +2,281 @@
 <html lang="ms">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#0f172a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CARA Dashboard</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  :root {
-    --bg: #0f172a; --card: #1e293b; --border: #334155;
-    --text: #f1f5f9; --muted: #94a3b8; --faint: #475569;
-    --green: #22c55e; --red: #ef4444; --blue: #60a5fa; --yellow: #fbbf24;
-    --green-bg: #14532d; --red-bg: #450a0a; --blue-bg: #1e3a5f; --yellow-bg: #422006;
-  }
-  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
-  .container { max-width: 480px; margin: 0 auto; padding: 14px; }
-
-  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-  .header-title { font-size: 20px; font-weight: 700; }
-  .header-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .ws-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--faint); margin-right: 4px; transition: background 0.3s; }
-  .ws-dot.live { background: var(--green); animation: pulse 2s infinite; }
-  .ws-dot.warn { background: var(--yellow); }
-  .last-update { font-size: 11px; color: var(--faint); text-align: right; }
-
-  .card { background: var(--card); border-radius: 16px; padding: 14px; margin-bottom: 10px; border: 1px solid var(--border); }
-
-  /* Price */
-  .price-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
-  .price-label { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
-  .price-value { font-size: 34px; font-weight: 800; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
-  .change-val { font-size: 20px; font-weight: 700; text-align: right; }
-  .change-sub { font-size: 10px; color: var(--muted); text-align: right; margin-top: 2px; }
-  .price-meta { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; padding-top: 10px; border-top: 1px solid var(--border); }
-  .meta-label { font-size: 10px; color: var(--muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.4px; text-align: center; }
-  .meta-val { font-size: 13px; font-weight: 600; text-align: center; }
-
-  /* Entry conditions */
-  .cond-title { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; font-weight: 600; }
-  .cond-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
-  .cond-item:last-of-type { border-bottom: none; padding-bottom: 0; }
-  .cond-icon { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
-  .cond-icon.ok { background: var(--green-bg); color: var(--green); }
-  .cond-icon.fail { background: var(--red-bg); color: var(--red); }
-  .cond-icon.wait { background: #1e293b; color: var(--faint); border: 1px solid var(--border); }
-  .cond-body { flex: 1; }
-  .cond-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-  .cond-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
-  .cond-val { font-size: 12px; font-weight: 600; margin-top: 3px; }
-  .cond-status { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
-  .status-buy { background: var(--green-bg); color: var(--green); }
-  .status-wait { background: var(--blue-bg); color: var(--blue); }
-  .status-exit { background: var(--yellow-bg); color: var(--yellow); }
-  .status-bear { background: var(--red-bg); color: var(--red); }
-
-  /* BB bar */
-  .bb-bar-wrap { margin-top: 6px; }
-  .bb-bar-track { height: 6px; background: var(--border); border-radius: 3px; position: relative; overflow: visible; }
-  .bb-bar-fill { height: 100%; background: linear-gradient(90deg, #60a5fa 0%, #22c55e 50%, #ef4444 100%); border-radius: 3px; opacity: 0.25; }
-  .bb-marker { position: absolute; top: -4px; width: 2px; height: 14px; background: var(--text); border-radius: 1px; transform: translateX(-50%); transition: left 0.5s; }
-  .bb-labels { display: flex; justify-content: space-between; margin-top: 3px; font-size: 9px; color: var(--faint); }
-
-  /* Badges */
-  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-  .badge-bull { background: var(--green-bg); color: var(--green); }
-  .badge-bear { background: var(--red-bg); color: var(--red); }
-  .badge-side { background: var(--blue-bg); color: var(--blue); }
-  .badge-open { background: var(--green-bg); color: var(--green); }
-
-  /* Account */
-  .acc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-  .acc-name { font-size: 13px; font-weight: 600; }
-  .acc-capital { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .acc-eq-val { font-size: 19px; font-weight: 700; }
-  .acc-pnl { font-size: 12px; font-weight: 600; margin-top: 2px; }
-  .acc-stats { display: flex; gap: 14px; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
-  .acc-stats span strong { color: var(--text); }
-  .pos-box { background: #0f172a; border-radius: 10px; padding: 10px; border: 1px solid var(--border); }
-  .pos-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .pos-pnl { font-size: 15px; font-weight: 700; }
-  .pos-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; }
-  .pi-label { font-size: 10px; color: var(--muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
-  .pi-val { font-size: 12px; font-weight: 600; }
-  .stop-val { color: var(--red) !important; }
-  .tp-val { color: var(--green) !important; }
-  .ladder { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
-  .ladder-title { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; margin-bottom: 10px; }
-  .ladder-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; gap: 1px; }
-  .ladder-dist { display: flex; justify-content: space-between; font-size: 10px; margin-top: 8px; }
-  .no-pos { text-align: center; padding: 10px; color: var(--faint); font-size: 12px; border: 1px dashed var(--border); border-radius: 10px; }
-  .last-trade { display: flex; justify-content: space-between; font-size: 11px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); color: var(--muted); }
-
-  /* Strategy chips */
-  .strat-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
-  .chip { background: #0f172a; border: 1px solid var(--border); border-radius: 7px; padding: 3px 9px; font-size: 11px; }
-  .chip span { color: var(--blue); font-weight: 600; }
-
-  /* Footer */
-  .footer { text-align: center; padding: 16px 0 6px; }
-  .footer p { font-size: 10px; color: var(--faint); margin-bottom: 3px; }
-  .ws-status { font-size: 10px; color: var(--faint); }
-
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-  .green { color: var(--green); } .red { color: var(--red); }
-  .blue { color: var(--blue); } .yellow { color: var(--yellow); }
+  :root{--bg:#0b0e14;--card:#131826;--card2:#1a2132;--line:#232b3e;--fg:#e8edf6;
+        --dim:#7d8aa5;--green:#2ecc71;--red:#ff5c5c;--gold:#e8b33d;--blue:#4f8ef7;
+        --badge:#1d2b45}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--fg);
+       font-family:-apple-system,"Segoe UI",Roboto,sans-serif;
+       display:flex;justify-content:center;padding:14px;min-height:100vh}
+  .wrap{width:100%;max-width:440px}
+  .top{display:flex;justify-content:space-between;align-items:flex-start;margin:4px 2px 14px}
+  h1{font-size:20px;letter-spacing:1px}
+  .sub{color:var(--dim);font-size:12px;margin-top:2px}
+  .ws{font-size:11px;color:var(--dim);text-align:right}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--dim);
+       margin-right:4px}
+  .dot.on{background:var(--green)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+        padding:16px;margin-bottom:12px}
+  .label{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;
+         margin-bottom:10px}
+  .big{font-size:34px;font-weight:700}
+  .pnl{font-size:15px;margin-top:2px}
+  .pos{color:var(--green)} .neg{color:var(--red)} .dim{color:var(--dim)}
+  .grid5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:6px;margin-top:12px}
+  .mini{background:var(--card2);border-radius:10px;padding:8px 4px;text-align:center;
+        border:1px solid transparent}
+  .mini.on{border-color:var(--green)}
+  .mini .nm{font-size:10px;color:var(--dim);margin-bottom:3px}
+  .mini .pr{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+  .mini .ch{font-size:9.5px;margin-top:2px}
+  .mini .held{font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--green);margin-top:3px}
+  .uninote{color:var(--dim);font-size:11.5px;line-height:1.55;margin-top:10px;
+           background:var(--card2);border-radius:8px;padding:10px}
+  .badge{display:inline-block;background:var(--badge);border:1px solid var(--line);
+         color:var(--blue);font-size:11px;font-weight:600;border-radius:20px;
+         padding:4px 12px;margin:2px 3px 2px 0}
+  .badge.green{color:var(--green)} .badge.gold{color:var(--gold)}
+  .bar-row{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:13px}
+  .bar-name{width:50px;color:var(--dim)}
+  .bar-track{flex:1;height:16px;background:var(--bg);border-radius:5px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:5px;transition:width .6s}
+  .bar-pct{width:52px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px}
+  .row{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;
+       border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:none}
+  .row .k{color:var(--dim)}
+  canvas{width:100%;height:90px}
+  .meta{display:flex;justify-content:space-between;color:var(--dim);font-size:10.5px;
+        margin-top:8px}
+  .foot{color:var(--dim);font-size:10.5px;text-align:center;margin:14px 0 6px;line-height:1.6}
+  .status{background:var(--card2);border-radius:10px;padding:12px;text-align:center;
+          font-size:13px;margin-top:12px}
 </style>
 </head>
 <body>
-<div class="container">
-
-  <!-- Header -->
-  <div class="header">
+<div class="wrap">
+  <div class="top">
     <div>
-      <div class="header-title">CARA Dashboard</div>
-      <div class="header-sub">LTC/USDT · Paper Trading · Syariah</div>
+      <h1>C A R A</h1>
+      <div class="sub">Multi-Aset &middot; Paper Trading &middot; Syariah</div>
     </div>
-    <div style="text-align:right">
-      <div class="last-update">
-        <span class="ws-dot" id="wsdot"></span><span id="upd">Sambung...</span>
-      </div>
-      <div class="ws-status" id="ws-label">WebSocket: —</div>
-    </div>
+    <div class="ws"><span class="dot" id="wsdot"></span><span id="clock">—</span><br>
+      <span id="wslabel">WebSocket: sambung…</span></div>
   </div>
 
-  <!-- Price card -->
   <div class="card">
-    <div class="price-row">
-      <div>
-        <div class="price-label">LTC/USDT Harga Semasa</div>
-        <div class="price-value" id="price">—</div>
-      </div>
-      <div>
-        <div class="change-val" id="change">—</div>
-        <div class="change-sub">24j %</div>
-      </div>
-    </div>
-    <div class="price-meta">
-      <div>
-        <div class="meta-label">24j Tinggi</div>
-        <div class="meta-val" id="high">—</div>
-      </div>
-      <div>
-        <div class="meta-label">24j Rendah</div>
-        <div class="meta-val" id="low">—</div>
-      </div>
-      <div>
-        <div class="meta-label">Regime</div>
-        <div id="regime-badge" class="meta-val">—</div>
-      </div>
-    </div>
+    <div class="label">Portfolio Equity <span style="float:right" id="mode"></span></div>
+    <div class="big" id="equity">—</div>
+    <div class="pnl dim" id="pnl">memuatkan…</div>
   </div>
 
-  <!-- Entry conditions card -->
   <div class="card">
-    <div class="cond-title">Syarat Entry BUY</div>
-
-    <!-- Syarat 1: Regime HMM -->
-    <div class="cond-item">
-      <div class="cond-icon wait" id="cond1-icon">?</div>
-      <div class="cond-body">
-        <div class="cond-name">Syarat 1 — Regime HMM</div>
-        <div class="cond-desc">HMM 2-state mesti kesan pasaran dalam mod <strong>BULL</strong>. Semasa BEAR, bot sekat semua BUY.</div>
-        <div class="cond-val" id="cond1-val">Menunggu data...</div>
-      </div>
+    <div class="label">Universe — 12 Aset Patuh Syariah</div>
+    <div class="grid5" id="tickers">
+      <div class="mini" id="m-BTC"><div class="nm">BTC</div><div class="pr" id="p-BTC">—</div><div class="ch" id="c-BTC"></div><div class="held" id="h-BTC"></div></div>
+      <div class="mini" id="m-ETH"><div class="nm">ETH</div><div class="pr" id="p-ETH">—</div><div class="ch" id="c-ETH"></div><div class="held" id="h-ETH"></div></div>
+      <div class="mini" id="m-ADA"><div class="nm">ADA</div><div class="pr" id="p-ADA">—</div><div class="ch" id="c-ADA"></div><div class="held" id="h-ADA"></div></div>
+      <div class="mini" id="m-XRP"><div class="nm">XRP</div><div class="pr" id="p-XRP">—</div><div class="ch" id="c-XRP"></div><div class="held" id="h-XRP"></div></div>
+      <div class="mini" id="m-SOL"><div class="nm">SOL</div><div class="pr" id="p-SOL">—</div><div class="ch" id="c-SOL"></div><div class="held" id="h-SOL"></div></div>
+      <div class="mini" id="m-AVAX"><div class="nm">AVAX</div><div class="pr" id="p-AVAX">—</div><div class="ch" id="c-AVAX"></div><div class="held" id="h-AVAX"></div></div>
+      <div class="mini" id="m-LINK"><div class="nm">LINK</div><div class="pr" id="p-LINK">—</div><div class="ch" id="c-LINK"></div><div class="held" id="h-LINK"></div></div>
+      <div class="mini" id="m-LTC"><div class="nm">LTC</div><div class="pr" id="p-LTC">—</div><div class="ch" id="c-LTC"></div><div class="held" id="h-LTC"></div></div>
+      <div class="mini" id="m-XLM"><div class="nm">XLM</div><div class="pr" id="p-XLM">—</div><div class="ch" id="c-XLM"></div><div class="held" id="h-XLM"></div></div>
+      <div class="mini" id="m-ATOM"><div class="nm">ATOM</div><div class="pr" id="p-ATOM">—</div><div class="ch" id="c-ATOM"></div><div class="held" id="h-ATOM"></div></div>
+      <div class="mini" id="m-UNI"><div class="nm">UNI</div><div class="pr" id="p-UNI">—</div><div class="ch" id="c-UNI"></div><div class="held" id="h-UNI"></div></div>
+      <div class="mini" id="m-PAXG"><div class="nm">PAXG</div><div class="pr" id="p-PAXG">—</div><div class="ch" id="c-PAXG"></div><div class="held" id="h-PAXG"></div></div>
     </div>
-
-    <!-- Syarat 2: BB %B -->
-    <div class="cond-item">
-      <div class="cond-icon wait" id="cond2-icon">?</div>
-      <div class="cond-body">
-        <div class="cond-name">Syarat 2 — Harga di bawah Lower BB Band</div>
-        <div class="cond-desc">BB %B mesti &lt; 0 — harga turun di bawah lower Bollinger Band(20,1.5). Ini zon oversold untuk mean-reversion.</div>
-        <div class="cond-val" id="cond2-val">Menunggu data...</div>
-        <!-- BB visual bar -->
-        <div class="bb-bar-wrap" id="bb-bar-wrap" style="display:none">
-          <div class="bb-bar-track">
-            <div class="bb-bar-fill" style="width:100%"></div>
-            <div class="bb-marker" id="bb-marker" style="left:50%"></div>
-          </div>
-          <div class="bb-labels">
-            <span id="bb-low-lbl">Lower</span>
-            <span>Mid</span>
-            <span id="bb-high-lbl">Upper</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Status keseluruhan -->
-    <div style="margin-top:6px">
-      <span class="cond-status status-wait" id="entry-status">⏳ Menunggu signal...</span>
-    </div>
-
-    <!-- Bar masa terkini -->
-    <div style="margin-top:8px; font-size:10px; color:var(--faint)">
-      Data bar 4h: <span id="bar-time">—</span>
-      &nbsp;·&nbsp;Kemaskini setiap 4j via GitHub Actions
-    </div>
+    <div class="uninote">12 aset patuh Syariah (saringan SAC SC Malaysia / AAOIFI). Sistem memilih beberapa aset untuk dipegang atau berlindung dalam <b>USDT</b> apabila tiada yang layak. PAXG = emas fizikal tertokenkan.</div>
   </div>
 
-  <!-- Strategy info -->
-  <div class="card" style="padding:12px 14px">
-    <div class="strat-row">
-      <div class="chip">BB(20,1.5) 4h</div>
-      <div class="chip">HMM 2-state</div>
-      <div class="chip">ATR×5.0 stop</div>
-      <div class="chip">WFA <span id="strat-wfa">9/10</span></div>
-      <div class="chip">OOS Sharpe <span id="strat-oos">3.246</span></div>
-    </div>
-    <div style="font-size:10px; color:var(--faint)">IS=3.119 · OOS=3.246 · OOS > IS = terbukti tiada overfit</div>
+  <div class="card">
+    <div class="label">Alokasi Semasa</div>
+    <div id="alloc"></div>
+    <div class="status" id="status">—</div>
   </div>
 
-  <!-- Accounts -->
-  <div id="accounts"></div>
-
-  <!-- Footer -->
-  <div class="footer">
-    <p>Harga: Binance WebSocket (real-time ~1s) · State: GitHub Actions (4j)</p>
-    <p>Syarat entry dikira dari bar 4h terkini — bukan harga tick semasa</p>
+  <div class="card">
+    <div class="label">Posisi &amp; Trade</div>
+    <div id="posinfo"></div>
   </div>
 
+  <div class="card">
+    <div class="label">Equity (1 Tahun)</div>
+    <canvas id="spark" width="800" height="180"></canvas>
+    <div class="meta"><span id="bar-date"></span><span id="updated"></span></div>
+  </div>
+
+  <div class="card" style="padding:12px 16px">
+    <span class="badge">Rotasi Bulanan</span><span class="badge gold">Kawalan Volatiliti</span>
+    <span class="badge green">Spot Sahaja</span><span class="badge">Tiada Leverage</span>
+    <span class="badge">Semakan Harian 00:20 UTC</span>
+  </div>
+
+  <div class="foot">Harga: Binance WebSocket (real-time) &middot; State: GitHub Actions (harian)<br>
+    Keputusan dibuat pada bar harian lengkap &middot; Logik strategi tidak didedahkan</div>
 </div>
 
 <script>
-// ── Config ────────────────────────────────────────────────────────────────
-const GITHUB_USER   = "ZahidZaki47";
-const GITHUB_REPO   = "cara-dashboard";
-const GITHUB_BRANCH = "main";
-const STATE_URL     = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/signal_state.json`;
-const WS_URL        = "wss://stream.binance.com/ws/ltcusdt@ticker";
-const STATE_REFRESH_MS = 5 * 60 * 1000; // Refresh state JSON setiap 5 minit
+const COLORS = {BTC:"#f7931a", ETH:"#627eea", ADA:"#0033ad", XRP:"#00aae4",
+                SOL:"#14f195", AVAX:"#e84142", LINK:"#2a5ada", LTC:"#345d9d",
+                XLM:"#54c4f2", ATOM:"#6f7390", UNI:"#ff007a", PAXG:"#e8b33d",
+                USDT:"#2ecc71"};
+const SYMS = ["BTCUSDT","ETHUSDT","ADAUSDT","XRPUSDT","SOLUSDT","AVAXUSDT",
+              "LINKUSDT","LTCUSDT","XLMUSDT","ATOMUSDT","UNIUSDT","PAXGUSDT"];
+let state = null;
+let live = {};   // sym -> {price, chg}
 
-// ── Helpers ───────────────────────────────────────────────────────────────
-const fmt  = (n, dp=2) => (n != null && !isNaN(n)) ? Number(n).toFixed(dp) : "—";
-const fmtU = n => n >= 0 ? "+$"+fmt(Math.abs(n)) : "-$"+fmt(Math.abs(n));
-const fmtP = n => n >= 0 ? "+"+fmt(n)+"%" : fmt(n)+"%";
-const el   = id => document.getElementById(id);
+function fmt(n, d=2){ return n.toLocaleString("en-US",{minimumFractionDigits:d, maximumFractionDigits:d}); }
 
-function regimeBadge(r) {
-  if (!r || r === "unknown") return '<span class="badge badge-side">— —</span>';
-  if (r === "bull")   return '<span class="badge badge-bull">▲ BULL</span>';
-  if (r === "bear")   return '<span class="badge badge-bear">▼ BEAR</span>';
-  return '<span class="badge badge-side">~ SIDEWAYS</span>';
-}
-
-function hoursOpen(iso) {
-  if (!iso) return 0;
-  const d = new Date(iso);
-  return isNaN(d) ? 0 : Math.floor((Date.now() - d) / 3600000);
-}
-
-// ── State (dari GitHub raw JSON) ──────────────────────────────────────────
-let appState = null;
-let livePrice = null;
-
-async function fetchState() {
-  try {
-    const r = await fetch(STATE_URL + "?t=" + Date.now(), { cache: "no-store" });
-    appState = await r.json();
-    renderConditions(appState);
-    renderAccounts(appState, livePrice);
-    renderRegime(appState);
-    el("bar-time").textContent = appState.bar_time || "—";
-    if (appState.strategy) {
-      el("strat-wfa").textContent = appState.strategy.wfa || "9/10";
-      el("strat-oos").textContent = appState.strategy.oos || "3.246";
-    }
-  } catch(e) {
-    console.warn("fetchState gagal:", e);
+function liveEquity(){
+  if (!state) return null;
+  let eq = state.cash_usd;
+  for (const [sym, qty] of Object.entries(state.holdings || {})){
+    const px = live[sym] ? live[sym].price : null;
+    if (px === null) return state.equity;   // fallback nilai bar terakhir
+    eq += qty * px;
   }
+  return eq;
 }
 
-// ── Entry Conditions ──────────────────────────────────────────────────────
-function renderConditions(state) {
+function render(){
   if (!state) return;
+  const eq = liveEquity() ?? state.equity;
+  document.getElementById("equity").textContent = "$" + fmt(eq);
+  const pnl = eq - state.initial, up = pnl >= 0;
+  const el = document.getElementById("pnl");
+  el.textContent = (up?"+":"−") + "$" + fmt(Math.abs(pnl)) + "  (" + (up?"+":"") +
+                   ((eq/state.initial-1)*100).toFixed(2) + "%)";
+  el.className = "pnl " + (up?"pos":"neg");
 
-  const regime = state.regime;
-  const signal = state.signal;
-  const pct_b  = state.pct_b;
-  const bbLow  = state.bb_lower;
-  const bbHigh = state.bb_upper;
-  const bbMid  = state.bb_mid;
-
-  // Syarat 1: Regime
-  const regimeOk = regime === "bull";
-  el("cond1-icon").className = "cond-icon " + (regimeOk ? "ok" : "fail");
-  el("cond1-icon").textContent = regimeOk ? "✓" : "✗";
-  el("cond1-val").innerHTML = `Regime semasa: <strong>${regime ? regime.toUpperCase() : "—"}</strong> ${regimeBadge(regime)}`;
-
-  // Syarat 2: %B < 0
-  const pctbOk = pct_b != null && pct_b < 0;
-  el("cond2-icon").className = "cond-icon " + (pctbOk ? "ok" : (pct_b != null ? "fail" : "wait"));
-  el("cond2-icon").textContent = pctbOk ? "✓" : (pct_b != null ? "✗" : "?");
-
-  if (pct_b != null) {
-    const pctbColor = pctbOk ? "var(--green)" : (pct_b < 0.3 ? "var(--yellow)" : "var(--red)");
-    el("cond2-val").innerHTML = `BB %B semasa: <strong style="color:${pctbColor}">${fmt(pct_b, 3)}</strong> `
-      + `<span style="font-size:10px;color:var(--muted)">(perlu &lt; 0.00 untuk BUY)</span>`;
-
-    // BB visual bar
-    el("bb-bar-wrap").style.display = "block";
-    // Clamp %B antara -0.3 dan 1.3 untuk paparan
-    const pct_clamped = Math.max(-0.3, Math.min(1.3, pct_b));
-    const leftPct = ((pct_clamped + 0.3) / 1.6) * 100;
-    el("bb-marker").style.left = leftPct + "%";
-    if (bbLow != null) el("bb-low-lbl").textContent = "$" + fmt(bbLow, 2);
-    if (bbHigh != null) el("bb-high-lbl").textContent = "$" + fmt(bbHigh, 2);
+  const mode = document.getElementById("mode");
+  const heldList = state.held_assets || [];
+  if (state.mode === "AKTIF" && heldList.length){
+    mode.innerHTML = '<span class="badge green">AKTIF — ' + heldList.join("/") + '</span>';
   } else {
-    el("cond2-val").textContent = "Menunggu data dari GitHub Actions...";
+    mode.innerHTML = '<span class="badge gold">PERTAHANAN — TUNAI</span>';
   }
 
-  // Status keseluruhan
-  const statusEl = el("entry-status");
-  if (signal === 1 || (regimeOk && pctbOk)) {
-    statusEl.className = "cond-status status-buy";
-    statusEl.textContent = "🟢 KEDUA SYARAT DIPENUHI — BOT BUY";
-  } else if (signal === -1) {
-    statusEl.className = "cond-status status-exit";
-    statusEl.textContent = "⚠ SIGNAL EXIT — BOT KELUAR POSISI";
-  } else if (regime === "bear") {
-    statusEl.className = "cond-status status-bear";
-    statusEl.textContent = "🔴 REGIME BEAR — SEMUA BUY DISEKAT";
-  } else if (pct_b != null && pct_b < 0.15) {
-    statusEl.className = "cond-status status-wait";
-    statusEl.textContent = "⏳ HAMPIR — Harga mendekati lower band";
-  } else {
-    statusEl.className = "cond-status status-wait";
-    statusEl.textContent = "⏳ Menunggu — harga belum sentuh lower BB band";
+  // Tanda aset yang sedang dipegang pada kad ticker
+  for (const nm of ["BTC","ETH","ADA","XRP","SOL","AVAX","LINK","LTC","XLM","ATOM","UNI","PAXG"]){
+    const card = document.getElementById("m-"+nm), tag = document.getElementById("h-"+nm);
+    const held = heldList.includes(nm);
+    if (card) card.className = "mini" + (held ? " on" : "");
+    if (tag) tag.textContent = held ? "DIPEGANG" : "";
   }
+
+  const alloc = document.getElementById("alloc");
+  alloc.innerHTML = "";
+  for (const [name, pct] of Object.entries(state.allocation_pct)){
+    if (pct < 0.5) continue;
+    const row = document.createElement("div");
+    row.className = "bar-row";
+    row.innerHTML = `<span class="bar-name">${name}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;
+        background:${COLORS[name]||"#7d8aa5"}"></div></div>
+      <span class="bar-pct">${pct.toFixed(1)}%</span>`;
+    alloc.appendChild(row);
+  }
+
+  document.getElementById("status").innerHTML = (state.mode === "AKTIF" && heldList.length)
+    ? `Memegang <b>${heldList.join(", ")}</b> — laras risiko harian; rotasi awal bulan`
+    : `&#9203; Mod pertahanan — tiada aset layak buat masa ini.<br>
+       <span class="dim">Kekal tunai sehingga rotasi awal bulan berikutnya.</span>`;
+
+  let pos = "";
+  pos += `<div class="row"><span class="k">Pegangan aktif</span>
+          <span>${heldList.length ? heldList.join(", ") : "TIADA — 100% USDT"}</span></div>`;
+  pos += `<div class="row"><span class="k">Jumlah trade</span><span>${state.n_trades}</span></div>`;
+  if (state.last_trade){
+    const lt = state.last_trade;
+    pos += `<div class="row"><span class="k">Trade terakhir</span>
+            <span>${lt.side} ${lt.symbol} $${fmt(lt.notional,0)} @ $${fmt(lt.price)}</span></div>`;
+  } else {
+    pos += `<div class="row"><span class="k">Trade terakhir</span><span class="dim">Belum ada</span></div>`;
+  }
+  document.getElementById("posinfo").innerHTML = pos;
+
+  const hist = state.history || [];
+  const cv = document.getElementById("spark"), ctx = cv.getContext("2d");
+  ctx.clearRect(0,0,cv.width,cv.height);
+  const vals = hist.map(h=>h.equity);
+  if (vals.length === 1) vals.push(vals[0]);
+  if (vals.length > 1){
+    const min = Math.min(...vals), max = Math.max(...vals), pad = (max-min)||1;
+    ctx.beginPath();
+    vals.forEach((v,i)=>{
+      const x = i/(vals.length-1)*cv.width;
+      const y = cv.height-10 - (v-min)/pad*(cv.height-20);
+      i? ctx.lineTo(x,y) : ctx.moveTo(x,y);
+    });
+    ctx.strokeStyle = vals[vals.length-1] >= vals[0] ? "#2ecc71" : "#ff5c5c";
+    ctx.lineWidth = 2.5; ctx.stroke();
+  }
+
+  document.getElementById("bar-date").textContent = "Data bar: " + state.bar_date;
+  document.getElementById("updated").textContent =
+    "Kemaskini state: " + new Date(state.updated_at).toLocaleString("ms-MY",
+      {timeZone:"Asia/Kuala_Lumpur", day:"numeric", month:"numeric", hour:"2-digit", minute:"2-digit"});
 }
 
-function renderRegime(state) {
-  if (!state) return;
-  el("regime-badge").innerHTML = regimeBadge(state.regime);
+async function loadState(){
+  // raw.githubusercontent = data terkini serta-merta selepas commit,
+  // tidak bergantung pada Pages build; fallback ke fail Pages tempatan.
+  const sources = [
+    "https://raw.githubusercontent.com/ZahidZaki47/cara-dashboard/main/cara_state.json",
+    "./cara_state.json",
+  ];
+  for (const src of sources){
+    try{
+      const r = await fetch(src + "?t=" + Date.now(), {cache:"no-store"});
+      if (!r.ok) continue;
+      state = await r.json();
+      render();
+      return;
+    }catch(e){ /* cuba sumber seterusnya */ }
+  }
+  document.getElementById("pnl").textContent = "Gagal memuatkan state";
 }
 
-// ── Price Ladder ──────────────────────────────────────────────────────────
-function buildPriceLadder(sl, entry, now, tp1, tp2) {
-  if (!sl || !tp2 || tp2 <= sl || now <= 0) return "";
-  const range = tp2 - sl;
-
-  // Flex proportions (proportional to actual price distance)
-  const f0 = Math.max(0.5, entry - sl);   // SL → Entry
-  const f1 = Math.max(0.1, now - entry);  // Entry → Now (profit zone)
-  const f2 = Math.max(0.1, tp1 - now);    // Now → TP1
-  const f3 = Math.max(0.1, tp2 - tp1);   // TP1 → TP2
-
-  const pctSL  = ((sl  - now) / now * 100).toFixed(1);
-  const pctTP1 = ((tp1 - now) / now * 100).toFixed(1);
-  const pctTP2 = ((tp2 - now) / now * 100).toFixed(1);
-
-  // Is now between entry and tp1? (normal profit zone)
-  const inZone = now >= entry && now < tp1;
-
-  return `
-  <div class="ladder">
-    <div class="ladder-title">Peta Harga</div>
-
-    <!-- Coloured bar -->
-    <div class="ladder-bar">
-      <div style="flex:${f0};background:rgba(239,68,68,0.18);border-radius:4px 0 0 4px"></div>
-      <div style="flex:${f1};background:${inZone ? 'var(--green)' : 'rgba(34,197,94,0.4)'}"></div>
-      <div style="flex:${f2};background:rgba(34,197,94,0.12);border:1px dashed rgba(34,197,94,0.45);border-radius:0"></div>
-      <div style="flex:${f3};background:rgba(34,197,94,0.05);border:1px dashed rgba(34,197,94,0.2);border-radius:0 4px 4px 0"></div>
-    </div>
-
-    <!-- Labels row (mirrors bar proportions) -->
-    <div style="display:flex;margin-top:5px;font-size:9px;font-weight:700;line-height:1.2">
-      <div style="flex:${f0};color:var(--red)">SL<br><span style="font-weight:400;color:var(--muted)">$${fmt(sl,2)}</span></div>
-      <div style="flex:${f1};text-align:right;color:var(--yellow)">Masuk<br><span style="font-weight:400;color:var(--muted)">$${fmt(entry,2)}</span></div>
-      <div style="flex:${f2};text-align:right;color:var(--blue)">Kini<br><span style="font-weight:400;color:var(--muted)">$${fmt(now,2)}</span></div>
-      <div style="flex:${f3};text-align:right;color:var(--green)">TP1&nbsp;·&nbsp;TP2<br><span style="font-weight:400;color:var(--muted)">$${fmt(tp1,2)}&nbsp;·&nbsp;$${fmt(tp2,2)}</span></div>
-    </div>
-
-    <!-- Distances -->
-    <div class="ladder-dist">
-      <span style="color:var(--red)">⬇ SL: ${pctSL}%</span>
-      <span style="color:var(--green)">TP1: +${pctTP1}%&nbsp;·&nbsp;TP2: +${pctTP2}% ⬆</span>
-    </div>
-  </div>`;
-}
-
-// ── Account cards ─────────────────────────────────────────────────────────
-function renderAccounts(state, price) {
-  if (!state || !state.accounts) return;
-
-  const tp1 = state.bb_mid;
-  const tp2 = state.bb_upper;
-
-  el("accounts").innerHTML = state.accounts.map(acc => {
-    const pos = acc.position;
-    const capital = acc.capital;
-    let equity = acc.cash || capital;
-    let posHtml = "";
-
-    if (pos && price) {
-      const posVal = pos.qty * price;
-      equity = (acc.cash || 0) + posVal;
-      const pnlUsd = (price - pos.entry_price) / pos.entry_price * pos.size_usd;
-      const pnlPct = (price - pos.entry_price) / pos.entry_price * 100;
-      const hrs = hoursOpen(pos.entry_time);
-      const pc  = pnlUsd >= 0 ? "green" : "red";
-      const ladderHtml = buildPriceLadder(pos.stop_price, pos.entry_price, price, tp1, tp2);
-
-      posHtml = `
-      <div class="pos-box">
-        <div class="pos-header">
-          <span class="badge badge-open">● POSISI TERBUKA</span>
-          <span class="pos-pnl ${pc}">${fmtU(pnlUsd)} (${fmtP(pnlPct)})</span>
-        </div>
-        <div class="pos-grid">
-          <div><div class="pi-label">Entry</div><div class="pi-val">$${fmt(pos.entry_price,4)}</div></div>
-          <div><div class="pi-label">Stop Loss ⬇</div><div class="pi-val stop-val">$${fmt(pos.stop_price,4)}</div></div>
-          <div><div class="pi-label">Saiz · Masa</div><div class="pi-val">$${fmt(pos.size_usd,0)} · ${hrs}j</div></div>
-        </div>
-        <div class="pos-grid" style="margin-top:5px">
-          <div><div class="pi-label">TP1 — BB Mid ⬆</div><div class="pi-val tp-val">$${fmt(tp1,4)}</div></div>
-          <div><div class="pi-label">TP2 — BB Upper ⬆</div><div class="pi-val tp-val">$${fmt(tp2,4)}</div></div>
-          <div><div class="pi-label">Exit Juga Bila</div><div class="pi-val" style="font-size:10px;color:var(--muted)">HMM→BEAR</div></div>
-        </div>
-        ${ladderHtml}
-      </div>`;
-    } else if (pos) {
-      posHtml = `
-      <div class="pos-box">
-        <div class="pos-header">
-          <span class="badge badge-open">● POSISI TERBUKA</span>
-          <span style="color:var(--muted);font-size:12px">Tunggu harga...</span>
-        </div>
-        <div class="pos-grid">
-          <div><div class="pi-label">Entry</div><div class="pi-val">$${fmt(pos.entry_price,4)}</div></div>
-          <div><div class="pi-label">Stop Loss ⬇</div><div class="pi-val stop-val">$${fmt(pos.stop_price,4)}</div></div>
-          <div><div class="pi-label">Saiz</div><div class="pi-val">$${fmt(pos.size_usd,0)}</div></div>
-        </div>
-        <div class="pos-grid" style="margin-top:5px">
-          <div><div class="pi-label">TP1 — BB Mid ⬆</div><div class="pi-val tp-val">$${fmt(tp1,4)}</div></div>
-          <div><div class="pi-label">TP2 — BB Upper ⬆</div><div class="pi-val tp-val">$${fmt(tp2,4)}</div></div>
-          <div><div class="pi-label">Exit Juga Bila</div><div class="pi-val" style="font-size:10px;color:var(--muted)">HMM→BEAR</div></div>
-        </div>
-      </div>`;
-    } else {
-      posHtml = `<div class="no-pos">Tiada posisi terbuka<br><span style="font-size:10px">Menunggu kedua syarat dipenuhi</span></div>`;
+// ── Binance WebSocket: harga real-time ──
+function connectWS(){
+  const streams = SYMS.map(s=>s.toLowerCase()+"@miniTicker").join("/");
+  const ws = new WebSocket("wss://stream.binance.com:9443/stream?streams=" + streams);
+  ws.onopen = ()=>{ document.getElementById("wsdot").className="dot on";
+                    document.getElementById("wslabel").textContent="WebSocket: Live"; };
+  ws.onmessage = (ev)=>{
+    const d = JSON.parse(ev.data).data;
+    const sym = d.s, price = parseFloat(d.c), open = parseFloat(d.o);
+    live[sym] = {price, chg:(price/open-1)*100};
+    const name = sym.replace("USDT","");
+    const pEl = document.getElementById("p-"+name), cEl = document.getElementById("c-"+name);
+    if (pEl){
+      pEl.textContent = "$" + fmt(price, price>1000?0:2);
+      const ch = live[sym].chg;
+      cEl.textContent = (ch>=0?"+":"") + ch.toFixed(1) + "%";
+      cEl.className = "ch " + (ch>=0?"pos":"neg");
     }
-
-    const pnl    = equity - capital;
-    const pnlPct = pnl / capital * 100;
-    const pc     = pnl >= 0 ? "green" : "red";
-    const wr     = acc.trades > 0 ? fmt(acc.wins / acc.trades * 100, 0) + "%" : "—";
-
-    const lastHtml = acc.last_trade ? `
-    <div class="last-trade">
-      <span>Trade terakhir</span>
-      <span class="${acc.last_trade.pnl >= 0 ? 'green' : 'red'}" style="font-weight:600">
-        ${fmtU(acc.last_trade.pnl)} · ${acc.last_trade.reason || ""}
-      </span>
-    </div>` : "";
-
-    return `
-    <div class="card">
-      <div class="acc-header">
-        <div><div class="acc-name">${acc.label}</div><div class="acc-capital">Modal: $${acc.capital.toLocaleString()}</div></div>
-        <div style="text-align:right">
-          <div class="acc-eq-val">$${fmt(equity,2)}</div>
-          <div class="acc-pnl ${pc}">${fmtU(pnl)} (${fmtP(pnlPct)})</div>
-        </div>
-      </div>
-      <div class="acc-stats">
-        <span>Trades: <strong>${acc.trades}</strong></span>
-        <span>Menang: <strong>${acc.wins}</strong></span>
-        <span>Win Rate: <strong>${wr}</strong></span>
-      </div>
-      ${posHtml}
-      ${lastHtml}
-    </div>`;
-  }).join("");
+    render();
+  };
+  ws.onclose = ()=>{ document.getElementById("wsdot").className="dot";
+                     document.getElementById("wslabel").textContent="WebSocket: sambung semula…";
+                     setTimeout(connectWS, 3000); };
+  ws.onerror = ()=>ws.close();
 }
 
-// ── Binance WebSocket (real-time ~1s) ─────────────────────────────────────
-// NOTA: /ws/<stream> ialah stream satu-hala — JANGAN hantar sebarang mesej.
-// Browser handle binary ping/pong secara automatik. Hantar JSON = server tutup.
-let ws = null;
-let wsReconnectTimer = null;
-let wsStaleTimer = null;
-let wsLastMsg = 0;
-
-function connectWS() {
-  if (ws) { try { ws.close(); } catch(e) {} }
-  clearTimeout(wsReconnectTimer);
-  clearInterval(wsStaleTimer);
-
-  el("ws-label").textContent = "WebSocket: Sambung...";
-  el("wsdot").className = "ws-dot warn";
-
-  ws = new WebSocket(WS_URL);
-
-  ws.onopen = () => {
-    wsLastMsg = Date.now();
-    el("ws-label").textContent = "WebSocket: Live ●";
-    el("wsdot").className = "ws-dot live";
-
-    // Semak staleness setiap 8s — jika >12s tiada data, reconnect
-    wsStaleTimer = setInterval(() => {
-      if (Date.now() - wsLastMsg > 12000) {
-        clearInterval(wsStaleTimer);
-        try { ws.close(); } catch(e) {}
-        connectWS();
-      }
-    }, 8000);
-  };
-
-  ws.onmessage = (evt) => {
-    try {
-      wsLastMsg = Date.now();
-      const d = JSON.parse(evt.data);
-      livePrice = parseFloat(d.c);
-      const change = parseFloat(d.P);
-      const high   = parseFloat(d.h);
-      const low    = parseFloat(d.l);
-
-      el("price").textContent = "$" + livePrice.toFixed(4);
-      const chEl = el("change");
-      chEl.textContent = fmtP(change);
-      chEl.className = "change-val " + (change >= 0 ? "green" : "red");
-      el("high").textContent = "$" + fmt(high, 4);
-      el("low").textContent  = "$" + fmt(low, 4);
-      el("upd").textContent  = new Date().toLocaleTimeString("ms-MY");
-
-      if (appState) renderAccounts(appState, livePrice);
-    } catch(e) {}
-  };
-
-  ws.onerror = () => {
-    el("ws-label").textContent = "WebSocket: Error";
-    el("wsdot").className = "ws-dot warn";
-  };
-
-  ws.onclose = () => {
-    clearInterval(wsStaleTimer);
-    el("ws-label").textContent = "WebSocket: Terputus — sambung semula...";
-    el("wsdot").className = "ws-dot";
-    wsReconnectTimer = setTimeout(connectWS, 3000);
-  };
+function tick(){
+  document.getElementById("clock").textContent =
+    new Date().toLocaleTimeString("ms-MY",{timeZone:"Asia/Kuala_Lumpur"});
 }
-
-// ── Init ──────────────────────────────────────────────────────────────────
-fetchState();
+setInterval(tick, 1000); tick();
+loadState();
+setInterval(loadState, 120000);
 connectWS();
-
-// Refresh state JSON setiap 5 minit (signal/regime update dari GitHub Actions)
-setInterval(fetchState, STATE_REFRESH_MS);
 </script>
 </body>
 </html>

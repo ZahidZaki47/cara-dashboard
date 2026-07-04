@@ -1,0 +1,41 @@
+{
+  "name": "CARA",
+  "equity": 2999.23,
+  "initial": 3000.0,
+  "pnl_usd": -0.77,
+  "pnl_pct": -0.03,
+  "cash_usd": 1969.5,
+  "holdings": {
+    "BTCUSDT": 0.00548457,
+    "LTCUSDT": 7.6582413,
+    "PAXGUSDT": 0.08233779
+  },
+  "mode": "AKTIF",
+  "held_assets": [
+    "BTC",
+    "LTC",
+    "PAXG"
+  ],
+  "allocation_pct": {
+    "BTC": 11.4,
+    "LTC": 11.4,
+    "PAXG": 11.4,
+    "USDT": 65.8
+  },
+  "n_trades": 3,
+  "last_trade": {
+    "time": "2026-07-04T03:12:20.616520+00:00",
+    "side": "BELI",
+    "symbol": "PAXG",
+    "notional": 343.24,
+    "price": 4168.71
+  },
+  "bar_date": "2026-07-03",
+  "updated_at": "2026-07-04T03:12:26.555815+00:00",
+  "history": [
+    {
+      "date": "2026-07-03",
+      "equity": 2999.23
+    }
+  ]
+}
