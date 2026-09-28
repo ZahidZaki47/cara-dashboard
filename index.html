@@ -317,30 +317,47 @@ async function loadState(){
   document.getElementById("pnl").textContent = "Gagal memuatkan state";
 }
 
+// Harga pasaran: endpoint RASMI data-pasaran Binance (binance.vision).
+// stream.binance.com & api.binance.com DISEKAT dari rangkaian Malaysia (timeout,
+// disahkan 28 Sep 2026; SC arah Binance tutup di MY sejak 2021). binance.vision OK.
+let wsLive = false;
+function setFeed(on, label){
+  document.getElementById("wsdot").className = on ? "dot on" : "dot";
+  document.getElementById("wslabel").textContent = label;
+}
+function handleTick(d){
+  const sym = d.s, price = parseFloat(d.c), open = parseFloat(d.o);
+  live[sym] = {price, chg:(price/open-1)*100};
+  const nm = sym.replace("USDT","");
+  const pEl = document.getElementById("p-"+nm), cEl = document.getElementById("c-"+nm);
+  if (pEl){
+    pEl.textContent = px_fmt(price);
+    const ch = live[sym].chg;
+    cEl.textContent = (ch>=0?"+":"") + ch.toFixed(1) + "%";
+    cEl.className = "ch " + (ch>=0?"pos":"neg");
+  }
+  render();
+}
+async function pollREST(){
+  if (wsLive) return;
+  try{
+    const r = await fetch("https://data-api.binance.vision/api/v3/ticker/24hr?type=MINI&symbols=" +
+                          encodeURIComponent(JSON.stringify(SYMS)), {cache:"no-store"});
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    for (const t of await r.json()) handleTick({s:t.symbol, c:t.lastPrice, o:t.openPrice});
+    if (!wsLive) setFeed(true, "Live (15s)");
+  }catch(e){ if (!wsLive) setFeed(false, "sambung semula…"); }
+}
 function connectWS(){
   const streams = SYMS.map(s=>s.toLowerCase()+"@miniTicker").join("/");
-  const ws = new WebSocket("wss://stream.binance.com:9443/stream?streams=" + streams);
-  ws.onopen = ()=>{ document.getElementById("wsdot").className="dot on";
-                    document.getElementById("wslabel").textContent="Live"; };
-  ws.onmessage = (ev)=>{
-    const d = JSON.parse(ev.data).data;
-    const sym = d.s, price = parseFloat(d.c), open = parseFloat(d.o);
-    live[sym] = {price, chg:(price/open-1)*100};
-    const nm = sym.replace("USDT","");
-    const pEl = document.getElementById("p-"+nm), cEl = document.getElementById("c-"+nm);
-    if (pEl){
-      pEl.textContent = px_fmt(price);
-      const ch = live[sym].chg;
-      cEl.textContent = (ch>=0?"+":"") + ch.toFixed(1) + "%";
-      cEl.className = "ch " + (ch>=0?"pos":"neg");
-    }
-    render();
-  };
-  ws.onclose = ()=>{ document.getElementById("wsdot").className="dot";
-                     document.getElementById("wslabel").textContent="sambung semula…";
-                     setTimeout(connectWS, 3000); };
+  const ws = new WebSocket("wss://data-stream.binance.vision/stream?streams=" + streams);
+  ws.onopen = ()=>{ wsLive = true; setFeed(true, "Live"); };
+  ws.onmessage = (ev)=>handleTick(JSON.parse(ev.data).data);
+  ws.onclose = ()=>{ wsLive = false; pollREST(); setTimeout(connectWS, 5000); };
   ws.onerror = ()=>ws.close();
 }
+setInterval(pollREST, 15000);
+pollREST();
 
 setInterval(()=>{ document.getElementById("clock").textContent =
   new Date().toLocaleTimeString("ms-MY",{timeZone:"Asia/Kuala_Lumpur"}); }, 1000);
