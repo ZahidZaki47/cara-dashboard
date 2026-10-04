@@ -1,19 +1,19 @@
 {
   "name": "CARA",
-  "equity": 3348.26,
+  "equity": 3351.68,
   "initial": 3000.0,
-  "pnl_usd": 348.26,
-  "pnl_pct": 11.61,
-  "cash_usd": 2134.41,
+  "pnl_usd": 351.68,
+  "pnl_pct": 11.72,
+  "cash_usd": 2048.49,
   "holdings": {
-    "BTCUSDT": 0.00457824,
+    "BTCUSDT": 0.00559052,
     "PAXGUSDT": 0.09903466,
     "ETHUSDT": 0.15575874
   },
   "positions": {
     "BTC": {
-      "qty": 0.00457824,
-      "avg_cost": 63135.9514,
+      "qty": 0.00559052,
+      "avg_cost": 67073.3129,
       "since": "2026-07-04T03:12:20.616520+00:00"
     },
     "PAXG": {
@@ -34,21 +34,21 @@
     "ETH"
   ],
   "allocation_pct": {
-    "BTC": 11.6,
+    "BTC": 14.1,
     "PAXG": 12.3,
-    "ETH": 12.4,
-    "USDT": 63.7
+    "ETH": 12.5,
+    "USDT": 61.1
   },
-  "n_trades": 22,
+  "n_trades": 23,
   "last_trade": {
-    "time": "2026-10-01T06:13:39.279097+00:00",
+    "time": "2026-10-04T06:05:13.550710+00:00",
     "side": "BELI",
-    "symbol": "ETH",
-    "notional": 418.37,
-    "price": 2686.01
+    "symbol": "BTC",
+    "notional": 85.79,
+    "price": 84753.56
   },
-  "bar_date": "2026-10-02",
-  "updated_at": "2026-10-03T05:30:17.893278+00:00",
+  "bar_date": "2026-10-03",
+  "updated_at": "2026-10-04T06:05:21.766221+00:00",
   "history": [
     {
       "date": "2026-07-03",
@@ -417,6 +417,10 @@
     {
       "date": "2026-10-02",
       "equity": 3348.26
+    },
+    {
+      "date": "2026-10-03",
+      "equity": 3351.68
     }
   ]
 }
