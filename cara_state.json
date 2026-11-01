@@ -1,9 +1,9 @@
 {
   "name": "CARA",
-  "equity": 3172.12,
+  "equity": 3175.59,
   "initial": 3000.0,
-  "pnl_usd": 172.12,
-  "pnl_pct": 5.74,
+  "pnl_usd": 175.59,
+  "pnl_pct": 5.85,
   "cash_usd": 1611.34,
   "holdings": {
     "BTCUSDT": 0.00678908,
@@ -36,8 +36,8 @@
   "allocation_pct": {
     "BTC": 16.6,
     "PAXG": 16.2,
-    "ETH": 16.4,
-    "USDT": 50.8
+    "ETH": 16.5,
+    "USDT": 50.7
   },
   "n_trades": 33,
   "last_trade": {
@@ -47,8 +47,8 @@
     "notional": 69.17,
     "price": 2245.54
   },
-  "bar_date": "2026-10-30",
-  "updated_at": "2026-10-31T06:00:08.076349+00:00",
+  "bar_date": "2026-10-31",
+  "updated_at": "2026-11-01T06:28:47.659682+00:00",
   "history": [
     {
       "date": "2026-07-03",
@@ -529,6 +529,10 @@
     {
       "date": "2026-10-30",
       "equity": 3172.12
+    },
+    {
+      "date": "2026-10-31",
+      "equity": 3175.59
     }
   ]
 }
