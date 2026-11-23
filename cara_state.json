@@ -1,18 +1,18 @@
 {
   "name": "CARA",
-  "equity": 2956.47,
+  "equity": 2971.45,
   "initial": 3000.0,
-  "pnl_usd": -43.53,
-  "pnl_pct": -1.45,
-  "cash_usd": 2005.15,
+  "pnl_usd": -28.55,
+  "pnl_pct": -0.95,
+  "cash_usd": 2066.23,
   "holdings": {
-    "BTCUSDT": 0.00555719,
+    "BTCUSDT": 0.00455883,
     "PAXGUSDT": 0.08598371,
     "ETHUSDT": 0.18451456
   },
   "positions": {
     "BTC": {
-      "qty": 0.00555719,
+      "qty": 0.00455883,
       "avg_cost": 71572.7376,
       "since": "2026-07-04T03:12:20.616520+00:00"
     },
@@ -34,21 +34,21 @@
     "ETH"
   ],
   "allocation_pct": {
-    "BTC": 11.3,
-    "PAXG": 10.3,
-    "ETH": 10.5,
-    "USDT": 67.9
+    "BTC": 9.4,
+    "PAXG": 10.4,
+    "ETH": 10.7,
+    "USDT": 69.5
   },
-  "n_trades": 37,
+  "n_trades": 38,
   "last_trade": {
-    "time": "2026-11-15T06:52:24.269946+00:00",
+    "time": "2026-11-23T07:55:59.988791+00:00",
     "side": "JUAL",
-    "symbol": "PAXG",
-    "notional": 91.86,
-    "price": 3801.1
+    "symbol": "BTC",
+    "notional": 61.17,
+    "price": 61271.08
   },
-  "bar_date": "2026-11-21",
-  "updated_at": "2026-11-22T07:09:40.681505+00:00",
+  "bar_date": "2026-11-22",
+  "updated_at": "2026-11-23T07:56:07.447557+00:00",
   "history": [
     {
       "date": "2026-07-03",
@@ -617,6 +617,10 @@
     {
       "date": "2026-11-21",
       "equity": 2956.47
+    },
+    {
+      "date": "2026-11-22",
+      "equity": 2971.45
     }
   ]
 }
